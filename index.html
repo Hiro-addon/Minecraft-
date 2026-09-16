@@ -182,8 +182,6 @@
 const fileInput = document.getElementById("fileInput");
 const result = document.getElementById("result");
 
-let outputBlob = null;
-
 fileInput.addEventListener("change", async function () {
     const file = this.files[0];
 
@@ -226,11 +224,6 @@ fileInput.addEventListener("change", async function () {
 
         const outputText = newLines.join("\n");
 
-        outputBlob = new Blob(
-            [outputText],
-            { type: "text/plain;charset=utf-8" }
-        );
-
         if (changed) {
             result.innerHTML =
                 '<div class="success">修正しました</div>' +
@@ -242,46 +235,52 @@ fileInput.addEventListener("change", async function () {
         }
 
         /*
-         * iPhoneなどで「ファイルに保存」するための共有ボタン
-         * 通常のダウンロードリンクは作成しません。
+         * 修正後のファイルだけを作成。
+         * 元のアップロードファイルは共有・ダウンロードしない。
+         */
+        const shareFile = new File(
+            [outputText],
+            "options.txt",
+            {
+                type: "text/plain"
+            }
+        );
+
+        /*
+         * iPhoneの共有シートには
+         * 修正後の options.txt だけを渡す。
          */
         if (navigator.share) {
-            try {
-                const shareFile = new File(
-                    [outputBlob],
-                    "options.txt",
-                    {
-                        type: "text/plain"
+            const share = document.createElement("button");
+            share.className = "share";
+            share.textContent = "「ファイル」に保存・共有";
+
+            share.addEventListener("click", async () => {
+                try {
+                    if (
+                        navigator.canShare &&
+                        !navigator.canShare({
+                            files: [shareFile]
+                        })
+                    ) {
+                        alert("この端末ではファイル共有を利用できません。");
+                        return;
                     }
-                );
 
-                if (
-                    !navigator.canShare ||
-                    navigator.canShare({ files: [shareFile] })
-                ) {
-                    const share = document.createElement("button");
-                    share.className = "share";
-                    share.textContent = "「ファイル」に保存・共有";
-
-                    share.addEventListener("click", async () => {
-                        try {
-                            await navigator.share({
-                                files: [shareFile],
-                                title: "options.txt"
-                            });
-                        } catch (error) {
-                            if (error.name !== "AbortError") {
-                                alert("共有に失敗しました。");
-                            }
-                        }
+                    await navigator.share({
+                        files: [shareFile],
+                        title: "options.txt"
                     });
 
-                    result.appendChild(share);
+                } catch (error) {
+                    if (error.name !== "AbortError") {
+                        alert("共有に失敗しました。");
+                    }
                 }
-            } catch (error) {
-                result.innerHTML +=
-                    '<div class="warning">この端末ではファイル共有を利用できません。</div>';
-            }
+            });
+
+            result.appendChild(share);
+
         } else {
             result.innerHTML +=
                 '<div class="warning">このブラウザではファイル共有を利用できません。</div>';
