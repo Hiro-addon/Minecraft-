@@ -3,515 +3,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft 起動バグ修正ツール</title>
-
+<title>Minecraft 起動バグ修正</title>
 <style>
-* {
-    box-sizing: border-box;
-}
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-}
-
-body {
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    background: #f3f4f6;
-    color: #222;
-    overflow-x: hidden;
-}
-
-main {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px 16px 40px;
-}
-
-.card {
-    width: 100%;
-    background: #fff;
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-h1 {
-    margin: 0 0 14px;
-    font-size: 24px;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-p {
-    margin: 0 0 16px;
-    color: #555;
-    font-size: 15px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-strong {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-code {
-    display: inline;
-    padding: 2px 5px;
-    border-radius: 5px;
-    background: #eee;
-    font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        monospace;
-    font-size: 0.9em;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-.small {
-    font-size: 13px;
-    line-height: 1.65;
-    color: #777;
-}
-
-.drop {
-    display: block;
-    width: 100%;
-    min-height: 150px;
-    margin-top: 22px;
-    padding: 30px 18px;
-    border: 2px dashed #aaa;
-    border-radius: 14px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-    overflow: hidden;
-}
-
-.drop:hover,
-.drop.drag {
-    border-color: #333;
-    background: #fafafa;
-}
-
-.drop strong {
-    display: block;
-    width: 100%;
-    margin-bottom: 8px;
-    font-size: 17px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-.drop .small {
-    display: block;
-    width: 100%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-}
-
-input {
-    display: none;
-}
-
-button {
-    display: block;
-    width: 100%;
-    min-height: 52px;
-    margin-top: 16px;
-    padding: 12px 16px;
-    border: 0;
-    border-radius: 12px;
-    background: #222;
-    color: #fff;
-    font-size: 16px;
-    line-height: 1.4;
-    font-weight: 600;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-
-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.status {
-    width: 100%;
-    margin-top: 18px;
-    padding: 14px;
-    border-radius: 12px;
-    background: #f0f0f0;
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    overflow: hidden;
-}
-
-/* iPhoneなどの狭い画面向け */
-@media (max-width: 480px) {
-
-    main {
-        padding: 12px 10px 30px;
+    * {
+        box-sizing: border-box;
     }
 
-    .card {
-        padding: 18px 15px;
-        border-radius: 15px;
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f2f2f2;
+        color: #222;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
-        font-size: 21px;
-        line-height: 1.4;
-        margin-bottom: 12px;
+        margin: 0 0 10px;
+        font-size: 24px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
     }
 
-    p {
-        font-size: 14px;
+    .description {
+        margin: 0 0 20px;
         line-height: 1.7;
-        margin-bottom: 14px;
+        overflow-wrap: anywhere;
     }
 
-    .small {
-        font-size: 12px;
-        line-height: 1.65;
+    .path {
+        padding: 14px;
+        margin: 16px 0;
+        background: #f5f5f5;
+        border-radius: 10px;
+        font-family: monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
-    .drop {
-        min-height: 135px;
-        padding: 25px 12px;
+    .upload {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: #333;
+        color: #fff;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 600;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .upload:hover {
+        background: #444;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .result {
+        display: none;
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 10px;
+        background: #f5f5f5;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .success {
+        color: #167a35;
+        font-weight: 600;
+    }
+
+    .warning {
+        color: #a15c00;
+        font-weight: 600;
+    }
+
+    .download {
+        display: block;
+        margin-top: 14px;
+        padding: 15px;
+        background: #167a35;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .download:hover {
+        background: #12652b;
+    }
+
+    .note {
         margin-top: 18px;
-    }
-
-    .drop strong {
-        font-size: 16px;
-    }
-
-    button {
-        min-height: 52px;
-        font-size: 15px;
-        padding: 12px;
-    }
-
-    .status {
         font-size: 13px;
-        padding: 12px;
-    }
-}
-
-/* さらに小さい画面 */
-@media (max-width: 350px) {
-
-    main {
-        padding: 8px 7px 25px;
+        color: #666;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
     }
 
-    .card {
-        padding: 15px 12px;
-    }
+    @media (max-width: 480px) {
+        body {
+            padding: 12px;
+        }
 
-    h1 {
-        font-size: 19px;
-    }
+        .container {
+            padding: 18px;
+            border-radius: 12px;
+        }
 
-    p {
-        font-size: 13px;
-    }
+        h1 {
+            font-size: 21px;
+        }
 
-    .drop {
-        padding: 22px 9px;
+        .path {
+            font-size: 12px;
+        }
     }
-
-    button {
-        font-size: 14px;
-    }
-}
 </style>
 </head>
 
 <body>
 
-<main>
+<div class="container">
+    <h1>Minecraft options.txt バグ修正</h1>
 
-<div class="card">
+    <p class="description">
+        Minecraft 統合版の描画モード設定による起動バグを修正します。
+    </p>
 
-<h1>Minecraft 起動バグ修正ツール</h1>
+    <div class="path">
+        Minecraft/games/com.mojang/minecraftpe にある
+        <strong>options.txt</strong>をアップロードしてください。
+    </div>
 
-<p>
-Minecraft Bedrock の一部環境で、
-<code>graphics_mode</code> が <code>2</code> ではない場合に
-正常に起動できなくなる起動バグを修正します。
-</p>
+    <label class="upload" for="fileInput">
+        options.txt を選択
+    </label>
 
-<p>
-<strong>
-「Minecraft/games/com.mojang/minecraftpe」にある
-<code>options.txt</code> をアップロードしてください。
-</strong>
-</p>
+    <input
+        id="fileInput"
+        type="file"
+        accept=".txt"
+    >
 
-<p class="small">
-アップロードした設定ファイルの
-<code>graphics_mode</code> が <code>2</code> ではない場合のみ
-<code>2</code> に変更します。
-それ以外の設定・順番・改行・空白は変更しません。
-ファイルはブラウザ内だけで処理され、
-サーバーへアップロードされません。
-</p>
+    <div id="result" class="result"></div>
 
-<label class="drop" id="drop">
-
-<strong id="label">options.txt を選択</strong>
-
-<span class="small">
-クリックまたはファイルをここへドラッグ＆ドロップ
-</span>
-
-<input
-    type="file"
-    id="file"
-    accept=".txt"
->
-
-</label>
-
-<button id="fix" disabled>
-起動バグを修正して保存
-</button>
-
-<div class="status" id="status">
-options.txt が選択されていません。
+    <p class="note">
+        ※「graphics_mode」がすでに「2」の場合は変更しません。<br>
+        ※「graphics_mode」が2ではない場合のみ「graphics_mode:2」に変更します。<br>
+        ※それ以外の設定はそのまま維持します。
+    </p>
 </div>
-
-</div>
-
-</main>
 
 <script>
+const fileInput = document.getElementById("fileInput");
+const result = document.getElementById("result");
 
-const fileInput = document.getElementById("file");
-const drop = document.getElementById("drop");
-const fixButton = document.getElementById("fix");
-const statusBox = document.getElementById("status");
-const label = document.getElementById("label");
+fileInput.addEventListener("change", async function () {
+    const file = this.files[0];
 
-let selectedFile = null;
-
-
-/* ファイル選択 */
-
-function selectFile(file) {
-
-    selectedFile = file;
-
-    label.textContent = file.name;
-
-    fixButton.disabled = false;
-
-    statusBox.textContent =
-        "選択済み: " + file.name;
-}
-
-
-/* ファイル選択ボタン */
-
-fileInput.addEventListener("change", () => {
-
-    if (fileInput.files.length) {
-
-        selectFile(fileInput.files[0]);
-
-    }
-
-});
-
-
-/* ドラッグ＆ドロップ */
-
-drop.addEventListener("dragover", (event) => {
-
-    event.preventDefault();
-
-    drop.classList.add("drag");
-
-});
-
-
-drop.addEventListener("dragleave", () => {
-
-    drop.classList.remove("drag");
-
-});
-
-
-drop.addEventListener("drop", (event) => {
-
-    event.preventDefault();
-
-    drop.classList.remove("drag");
-
-    if (event.dataTransfer.files.length) {
-
-        selectFile(event.dataTransfer.files[0]);
-
-    }
-
-});
-
-
-/* 修正処理 */
-
-fixButton.addEventListener("click", async () => {
-
-    if (!selectedFile) {
+    if (!file) {
         return;
     }
 
+    result.style.display = "block";
+    result.innerHTML = "処理中...";
+
     try {
+        const text = await file.text();
 
-        const buffer =
-            await selectedFile.arrayBuffer();
+        const lines = text.split(/\r?\n/);
 
-        let text =
-            new TextDecoder("utf-8").decode(buffer);
+        let found = false;
+        let changed = false;
 
+        const newLines = lines.map(line => {
+            if (/^graphics_mode:/.test(line)) {
+                found = true;
 
-        /*
-         * graphics_mode の行を探す
-         *
-         * 2の場合
-         * → 何も変更しない
-         *
-         * 2以外の場合
-         * → 2へ変更
-         *
-         * その他の設定は変更しない
-         */
+                const value = line.substring("graphics_mode:".length);
 
-        const pattern =
-            /^([ \t]*graphics_mode[ \t]*:)[ \t]*([^\r\n]*)(\r?)(?=\n|$)/m;
-
-
-        const match =
-            text.match(pattern);
-
-
-        /* graphics_mode が存在しない */
-
-        if (!match) {
-
-            statusBox.textContent =
-                "graphics_mode が見つかりませんでした。\n" +
-                "ファイルは変更せず、保存も行いません。";
-
-            return;
-        }
-
-
-        const currentValue =
-            match[2].trim();
-
-
-        /* すでに2なら変更しない */
-
-        if (currentValue === "2") {
-
-            statusBox.textContent =
-                "修正不要です。\n" +
-                "graphics_mode はすでに 2 になっています。\n" +
-                "ファイルは変更していません。";
-
-            return;
-        }
-
-
-        /* 2ではない場合のみ2へ変更 */
-
-        text =
-            text.replace(
-                pattern,
-                "$1 2$3"
-            );
-
-
-        /* 修正後のファイルを作成 */
-
-        const blob =
-            new Blob(
-                [text],
-                {
-                    type:
-                        "text/plain;charset=utf-8"
+                if (value !== "2") {
+                    changed = true;
+                    return "graphics_mode:2";
                 }
-            );
 
+                return line;
+            }
 
-        const url =
-            URL.createObjectURL(blob);
+            return line;
+        });
 
+        if (!found) {
+            result.innerHTML =
+                '<div class="warning">graphics_mode が見つかりませんでした。</div>';
+            return;
+        }
 
-        const a =
-            document.createElement("a");
+        if (changed) {
+            result.innerHTML =
+                '<div class="success">修正しました</div>' +
+                '<div>graphics_mode を 2 に変更しました。</div>';
+        } else {
+            result.innerHTML =
+                '<div class="success">修正の必要はありません。</div>' +
+                '<div>graphics_mode はすでに 2 です。</div>';
+        }
 
+        const outputText = newLines.join("\n");
 
-        a.href = url;
+        const blob = new Blob(
+            [outputText],
+            { type: "text/plain;charset=utf-8" }
+        );
 
-        a.download =
-            "options_fixed.txt";
+        const url = URL.createObjectURL(blob);
 
+        const download = document.createElement("a");
+        download.className = "download";
+        download.href = url;
+        download.download = "options.txt";
+        download.textContent = "options.txt をダウンロード";
 
-        document.body.appendChild(a);
-
-        a.click();
-
-        a.remove();
-
-
-        setTimeout(() => {
-
-            URL.revokeObjectURL(url);
-
-        }, 1000);
-
-
-        statusBox.textContent =
-            "修正完了！\n" +
-            "graphics_mode が 2 ではなかったため、2 に変更しました。\n" +
-            "その他の設定は変更していません。\n\n" +
-            "保存ファイル: options_fixed.txt";
-
+        result.appendChild(download);
 
     } catch (error) {
-
-        statusBox.textContent =
-            "処理中にエラーが発生しました。\n" +
-            error.message;
-
+        result.innerHTML =
+            '<div class="warning">ファイルの読み込みに失敗しました。</div>';
     }
-
 });
-
 </script>
 
 </body>
