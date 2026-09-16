@@ -94,39 +94,25 @@ input[type="file"] {
     font-weight: 600;
 }
 
-.download,
-.share {
+.download {
     display: block;
     width: 100%;
     margin-top: 14px;
     padding: 15px;
     border: 0;
     border-radius: 10px;
+    background: #167a35;
+    color: #fff;
     text-align: center;
     font-weight: 600;
     font-size: 16px;
     line-height: 1.4;
     cursor: pointer;
-    text-decoration: none;
     overflow-wrap: anywhere;
-}
-
-.download {
-    background: #167a35;
-    color: #fff;
 }
 
 .download:hover {
     background: #12652b;
-}
-
-.share {
-    background: #333;
-    color: #fff;
-}
-
-.share:hover {
-    background: #444;
 }
 
 .note {
@@ -185,16 +171,17 @@ input[type="file"] {
     <div id="result" class="result"></div>
 
     <p class="note">
-        ※「graphics_mode」がすでに「2」の場合は変更しません。<br>
         ※「graphics_mode」が2ではない場合のみ「graphics_mode:2」に変更します。<br>
         ※それ以外の設定はそのまま維持します。<br>
-        ※修正後のファイル名は「options.txt」です。
+        ※ボタンを押すと修正済みの「options.txt」を共有できます。
     </p>
 </div>
 
 <script>
 const fileInput = document.getElementById("fileInput");
 const result = document.getElementById("result");
+
+let outputText = "";
 
 fileInput.addEventListener("change", async function () {
     const selectedFile = this.files[0];
@@ -237,14 +224,7 @@ fileInput.addEventListener("change", async function () {
             return;
         }
 
-        const outputText = newLines.join("\n");
-
-        const outputBlob = new Blob(
-            [outputText],
-            { type: "text/plain" }
-        );
-
-        const outputUrl = URL.createObjectURL(outputBlob);
+        outputText = newLines.join("\n");
 
         if (changed) {
             result.innerHTML =
@@ -256,57 +236,53 @@ fileInput.addEventListener("change", async function () {
                 '<div>graphics_mode はすでに 2 です。</div>';
         }
 
-        const download = document.createElement("a");
+        const download = document.createElement("button");
         download.className = "download";
-        download.href = outputUrl;
-        download.download = "options.txt";
+        download.type = "button";
         download.textContent = "options.txt をダウンロード";
 
-        result.appendChild(download);
+        download.addEventListener("click", async () => {
+            const outputFile = new File(
+                [outputText],
+                "options.txt",
+                {
+                    type: "text/plain",
+                    lastModified: Date.now()
+                }
+            );
 
-        const shareFile = new File(
-            [outputText],
-            "options.txt",
-            {
-                type: "text/plain"
-            }
-        );
-
-        if (
-            navigator.share &&
-            navigator.canShare &&
-            navigator.canShare({
-                files: [shareFile]
-            })
-        ) {
-            const share = document.createElement("button");
-            share.className = "share";
-            share.type = "button";
-            share.textContent = "「ファイル」に保存・共有";
-
-            share.addEventListener("click", async () => {
+            if (
+                navigator.share &&
+                navigator.canShare &&
+                navigator.canShare({
+                    files: [outputFile]
+                })
+            ) {
                 try {
-                    const onlyOptionsFile = new File(
-                        [outputText],
-                        "options.txt",
-                        {
-                            type: "text/plain",
-                            lastModified: Date.now()
-                        }
-                    );
-
                     await navigator.share({
-                        files: [onlyOptionsFile]
+                        files: [outputFile]
                     });
+                    return;
                 } catch (error) {
-                    if (error.name !== "AbortError") {
-                        alert("共有に失敗しました。");
+                    if (error.name === "AbortError") {
+                        return;
                     }
                 }
-            });
+            }
 
-            result.appendChild(share);
-        }
+            const url = URL.createObjectURL(outputFile);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = "options.txt";
+            link.click();
+
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 1000);
+        });
+
+        result.appendChild(download);
 
         fileInput.value = "";
 
