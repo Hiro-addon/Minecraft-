@@ -94,7 +94,6 @@
         font-weight: 600;
     }
 
-    .download,
     .share {
         display: block;
         width: 100%;
@@ -107,22 +106,9 @@
         font-size: 16px;
         line-height: 1.4;
         cursor: pointer;
-        text-decoration: none;
-        overflow-wrap: anywhere;
-    }
-
-    .download {
-        background: #167a35;
-        color: #fff;
-    }
-
-    .download:hover {
-        background: #12652b;
-    }
-
-    .share {
         background: #333;
         color: #fff;
+        overflow-wrap: anywhere;
     }
 
     .share:hover {
@@ -255,25 +241,24 @@ fileInput.addEventListener("change", async function () {
                 '<div>graphics_mode はすでに 2 です。</div>';
         }
 
-        const url = URL.createObjectURL(outputBlob);
-
-        const download = document.createElement("a");
-        download.className = "download";
-        download.href = url;
-        download.download = "options.txt";
-        download.textContent = "options.txt をダウンロード";
-
-        result.appendChild(download);
-
-        if (navigator.share && navigator.canShare) {
+        /*
+         * iPhoneなどで「ファイルに保存」するための共有ボタン
+         * 通常のダウンロードリンクは作成しません。
+         */
+        if (navigator.share) {
             try {
                 const shareFile = new File(
                     [outputBlob],
                     "options.txt",
-                    { type: "text/plain" }
+                    {
+                        type: "text/plain"
+                    }
                 );
 
-                if (navigator.canShare({ files: [shareFile] })) {
+                if (
+                    !navigator.canShare ||
+                    navigator.canShare({ files: [shareFile] })
+                ) {
                     const share = document.createElement("button");
                     share.className = "share";
                     share.textContent = "「ファイル」に保存・共有";
@@ -294,8 +279,12 @@ fileInput.addEventListener("change", async function () {
                     result.appendChild(share);
                 }
             } catch (error) {
-                // 共有機能が使えない端末では通常のダウンロードだけ表示
+                result.innerHTML +=
+                    '<div class="warning">この端末ではファイル共有を利用できません。</div>';
             }
+        } else {
+            result.innerHTML +=
+                '<div class="warning">このブラウザではファイル共有を利用できません。</div>';
         }
 
     } catch (error) {
