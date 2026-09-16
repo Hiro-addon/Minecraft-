@@ -197,9 +197,9 @@ const fileInput = document.getElementById("fileInput");
 const result = document.getElementById("result");
 
 fileInput.addEventListener("change", async function () {
-    const file = this.files[0];
+    const selectedFile = this.files[0];
 
-    if (!file) {
+    if (!selectedFile) {
         return;
     }
 
@@ -207,7 +207,7 @@ fileInput.addEventListener("change", async function () {
     result.innerHTML = "処理中...";
 
     try {
-        const text = await file.text();
+        const text = await selectedFile.text();
         const lines = text.split(/\r?\n/);
 
         let found = false;
@@ -233,16 +233,18 @@ fileInput.addEventListener("change", async function () {
         if (!found) {
             result.innerHTML =
                 '<div class="warning">graphics_mode が見つかりませんでした。</div>';
+            fileInput.value = "";
             return;
         }
 
         const outputText = newLines.join("\n");
 
-        const outputFile = new File(
+        const outputBlob = new Blob(
             [outputText],
-            "options.txt",
             { type: "text/plain" }
         );
+
+        const outputUrl = URL.createObjectURL(outputBlob);
 
         if (changed) {
             result.innerHTML =
@@ -254,30 +256,47 @@ fileInput.addEventListener("change", async function () {
                 '<div>graphics_mode はすでに 2 です。</div>';
         }
 
-        const downloadUrl = URL.createObjectURL(outputFile);
-
         const download = document.createElement("a");
         download.className = "download";
-        download.href = downloadUrl;
+        download.href = outputUrl;
         download.download = "options.txt";
         download.textContent = "options.txt をダウンロード";
 
         result.appendChild(download);
 
+        const shareFile = new File(
+            [outputText],
+            "options.txt",
+            {
+                type: "text/plain"
+            }
+        );
+
         if (
             navigator.share &&
             navigator.canShare &&
-            navigator.canShare({ files: [outputFile] })
+            navigator.canShare({
+                files: [shareFile]
+            })
         ) {
             const share = document.createElement("button");
             share.className = "share";
+            share.type = "button";
             share.textContent = "「ファイル」に保存・共有";
 
             share.addEventListener("click", async () => {
                 try {
+                    const onlyOptionsFile = new File(
+                        [outputText],
+                        "options.txt",
+                        {
+                            type: "text/plain",
+                            lastModified: Date.now()
+                        }
+                    );
+
                     await navigator.share({
-                        files: [outputFile],
-                        title: "options.txt"
+                        files: [onlyOptionsFile]
                     });
                 } catch (error) {
                     if (error.name !== "AbortError") {
@@ -289,9 +308,13 @@ fileInput.addEventListener("change", async function () {
             result.appendChild(share);
         }
 
+        fileInput.value = "";
+
     } catch (error) {
         result.innerHTML =
             '<div class="warning">ファイルの読み込みに失敗しました。</div>';
+
+        fileInput.value = "";
     }
 });
 </script>
