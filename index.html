@@ -5,142 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Minecraft 起動バグ修正</title>
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f2f2f2;
+    color: #222;
+}
+
+.container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.description {
+    margin: 0 0 20px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.path {
+    padding: 14px;
+    margin: 16px 0;
+    background: #f5f5f5;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.upload {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #333;
+    color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.upload:hover {
+    background: #444;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.result {
+    display: none;
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #f5f5f5;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.success {
+    color: #167a35;
+    font-weight: 600;
+}
+
+.warning {
+    color: #a15c00;
+    font-weight: 600;
+}
+
+.download,
+.share {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.4;
+    cursor: pointer;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.download {
+    background: #167a35;
+    color: #fff;
+}
+
+.download:hover {
+    background: #12652b;
+}
+
+.share {
+    background: #333;
+    color: #fff;
+}
+
+.share:hover {
+    background: #444;
+}
+
+.note {
+    margin-top: 18px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
     body {
-        margin: 0;
-        padding: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f2f2f2;
-        color: #222;
+        padding: 12px;
     }
 
     .container {
-        width: 100%;
-        max-width: 700px;
-        margin: 0 auto;
-        background: #fff;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 18px;
+        border-radius: 12px;
     }
 
     h1 {
-        margin: 0 0 10px;
-        font-size: 24px;
-        line-height: 1.35;
-        overflow-wrap: anywhere;
-    }
-
-    .description {
-        margin: 0 0 20px;
-        line-height: 1.7;
-        overflow-wrap: anywhere;
+        font-size: 21px;
     }
 
     .path {
-        padding: 14px;
-        margin: 16px 0;
-        background: #f5f5f5;
-        border-radius: 10px;
-        font-family: monospace;
-        font-size: 13px;
-        line-height: 1.6;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+        font-size: 12px;
     }
-
-    .upload {
-        display: block;
-        width: 100%;
-        padding: 16px;
-        background: #333;
-        color: #fff;
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        font-weight: 600;
-        line-height: 1.4;
-        overflow-wrap: anywhere;
-    }
-
-    .upload:hover {
-        background: #444;
-    }
-
-    input[type="file"] {
-        display: none;
-    }
-
-    .result {
-        display: none;
-        margin-top: 20px;
-        padding: 16px;
-        border-radius: 10px;
-        background: #f5f5f5;
-        line-height: 1.7;
-        overflow-wrap: anywhere;
-    }
-
-    .success {
-        color: #167a35;
-        font-weight: 600;
-    }
-
-    .warning {
-        color: #a15c00;
-        font-weight: 600;
-    }
-
-    .share {
-        display: block;
-        width: 100%;
-        margin-top: 14px;
-        padding: 15px;
-        border: 0;
-        border-radius: 10px;
-        text-align: center;
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 1.4;
-        cursor: pointer;
-        background: #333;
-        color: #fff;
-        overflow-wrap: anywhere;
-    }
-
-    .share:hover {
-        background: #444;
-    }
-
-    .note {
-        margin-top: 18px;
-        font-size: 13px;
-        color: #666;
-        line-height: 1.7;
-        overflow-wrap: anywhere;
-    }
-
-    @media (max-width: 480px) {
-        body {
-            padding: 12px;
-        }
-
-        .container {
-            padding: 18px;
-            border-radius: 12px;
-        }
-
-        h1 {
-            font-size: 21px;
-        }
-
-        .path {
-            font-size: 12px;
-        }
-    }
+}
 </style>
 </head>
 
@@ -224,6 +238,12 @@ fileInput.addEventListener("change", async function () {
 
         const outputText = newLines.join("\n");
 
+        const outputFile = new File(
+            [outputText],
+            "options.txt",
+            { type: "text/plain" }
+        );
+
         if (changed) {
             result.innerHTML =
                 '<div class="success">修正しました</div>' +
@@ -234,44 +254,31 @@ fileInput.addEventListener("change", async function () {
                 '<div>graphics_mode はすでに 2 です。</div>';
         }
 
-        /*
-         * 修正後のファイルだけを作成。
-         * 元のアップロードファイルは共有・ダウンロードしない。
-         */
-        const shareFile = new File(
-            [outputText],
-            "options.txt",
-            {
-                type: "text/plain"
-            }
-        );
+        const downloadUrl = URL.createObjectURL(outputFile);
 
-        /*
-         * iPhoneの共有シートには
-         * 修正後の options.txt だけを渡す。
-         */
-        if (navigator.share) {
+        const download = document.createElement("a");
+        download.className = "download";
+        download.href = downloadUrl;
+        download.download = "options.txt";
+        download.textContent = "options.txt をダウンロード";
+
+        result.appendChild(download);
+
+        if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({ files: [outputFile] })
+        ) {
             const share = document.createElement("button");
             share.className = "share";
             share.textContent = "「ファイル」に保存・共有";
 
             share.addEventListener("click", async () => {
                 try {
-                    if (
-                        navigator.canShare &&
-                        !navigator.canShare({
-                            files: [shareFile]
-                        })
-                    ) {
-                        alert("この端末ではファイル共有を利用できません。");
-                        return;
-                    }
-
                     await navigator.share({
-                        files: [shareFile],
+                        files: [outputFile],
                         title: "options.txt"
                     });
-
                 } catch (error) {
                     if (error.name !== "AbortError") {
                         alert("共有に失敗しました。");
@@ -280,10 +287,6 @@ fileInput.addEventListener("change", async function () {
             });
 
             result.appendChild(share);
-
-        } else {
-            result.innerHTML +=
-                '<div class="warning">このブラウザではファイル共有を利用できません。</div>';
         }
 
     } catch (error) {
